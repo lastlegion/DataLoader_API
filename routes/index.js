@@ -19,7 +19,7 @@ router.get("/subjectIdExists", function(req, res, next){
 
     superagent.get(url).end(function(err, response){
         if(err){
-            res.json({"status": "Error! Couldn't connect to Bindass"});
+            return res.json({"status": "Error! Couldn't connect to Bindass"});
         }
         var data = (response.body);
         /*
@@ -27,7 +27,7 @@ router.get("/subjectIdExists", function(req, res, next){
             res.json({});
         } 
         */
-        res.json(data);
+        return res.json(data);
     });
 });
 
@@ -40,10 +40,12 @@ router.get("/getMD5ForImage", function(req, res, next){
     console.log(url);
     superagent.get(url).end(function(err, response){
         if(err){
-            res.json({"status": "error"})
+            return res.json({"status": "error"})
         }
         else{
-            res.json(response.body);
+	
+		console.log(response);
+           return res.json(response.body);
         }
         //console.log(response.body);
         //console.log(res);
@@ -83,16 +85,19 @@ router.post('/submitData', function(req, res, next){
         var api_key = req.app.locals.api_key;
         var api_exists = req.app.locals.api_subject_id_exists;
         var url = api_exists + "?api_key=" + api_key + "&Subject_ID=" + Image_ID;
-
+        console.log(url);
         superagent.get(url).end(function(err, response){
-        
+             
+            
             if(err){
-                res.json({"status": "Error! Couldn't connect to Bindass"});
+                console.log(err)
+                return res.json({"status": "Error! Couldn't connect to Bindass"});
             }
-            var data = (response.body);
+            console.log(response);
+	        var data = (response.body);
             console.log(data);
             if(data.length){
-                res.json({"status": "Error", "message": "Duplicate image"});
+               return res.json({"status": "Error", "message": "Duplicate image"});
             } else {
 
                 console.log("Uploading: "+filename);    
